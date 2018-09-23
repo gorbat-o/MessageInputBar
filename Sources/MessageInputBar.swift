@@ -76,7 +76,7 @@ open class MessageInputBar: UIView {
     }
     
     /// A SeparatorLine that is anchored at the top of the MessageInputBar with a height of 1
-    open let separatorLine = SeparatorLine()
+    public let separatorLine = SeparatorLine()
     
     /**
      The InputStackView at the InputStackView.top position
@@ -85,7 +85,7 @@ open class MessageInputBar: UIView {
      1. It's axis is initially set to .vertical
      2. It's alignment is initially set to .fill
      */
-    open let topStackView: InputStackView = {
+    public let topStackView: InputStackView = {
         let stackView = InputStackView(axis: .vertical, spacing: 0)
         stackView.alignment = .fill
         return stackView
@@ -97,7 +97,7 @@ open class MessageInputBar: UIView {
      ## Important Notes ##
      1. It's axis is initially set to .horizontal
      */
-    open let leftStackView = InputStackView(axis: .horizontal, spacing: 0)
+    public let leftStackView = InputStackView(axis: .horizontal, spacing: 0)
     
     /**
      The InputStackView at the InputStackView.right position
@@ -105,7 +105,7 @@ open class MessageInputBar: UIView {
      ## Important Notes ##
      1. It's axis is initially set to .horizontal
      */
-    open let rightStackView = InputStackView(axis: .horizontal, spacing: 0)
+    public let rightStackView = InputStackView(axis: .horizontal, spacing: 0)
     
     /**
      The InputStackView at the InputStackView.bottom position
@@ -114,7 +114,7 @@ open class MessageInputBar: UIView {
      1. It's axis is initially set to .horizontal
      2. It's spacing is initially set to 15
      */
-    open let bottomStackView = InputStackView(axis: .horizontal, spacing: 15)
+    public let bottomStackView = InputStackView(axis: .horizontal, spacing: 15)
     
     /// The InputTextView a user can input a message in
     open lazy var inputTextView: InputTextView = {
@@ -322,16 +322,16 @@ open class MessageInputBar: UIView {
     private func setupObservers() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(MessageInputBar.orientationDidChange),
-                                               name: .UIDeviceOrientationDidChange, object: nil)
+                                               name: UIDevice.orientationDidChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(MessageInputBar.inputTextViewDidChange),
-                                               name: NSNotification.Name.UITextViewTextDidChange, object: inputTextView)
+                                               name: UITextView.textDidChangeNotification, object: inputTextView)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(MessageInputBar.inputTextViewDidBeginEditing),
-                                               name: NSNotification.Name.UITextViewTextDidBeginEditing, object: inputTextView)
+                                               name: UITextView.textDidBeginEditingNotification, object: inputTextView)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(MessageInputBar.inputTextViewDidEndEditing),
-                                               name: NSNotification.Name.UITextViewTextDidEndEditing, object: inputTextView)
+                                               name: UITextView.textDidEndEditingNotification, object: inputTextView)
     }
     
     /// Adds all of the subviews
@@ -425,7 +425,7 @@ open class MessageInputBar: UIView {
             guard UIScreen.main.nativeBounds.height == 2436 else { return }
             if let window = window {
                 windowAnchor?.isActive = false
-                windowAnchor = contentView.bottomAnchor.constraintLessThanOrEqualToSystemSpacingBelow(window.safeAreaLayoutGuide.bottomAnchor, multiplier: 1)
+                windowAnchor = contentView.bottomAnchor.constraint(lessThanOrEqualToSystemSpacingBelow: window.safeAreaLayoutGuide.bottomAnchor, multiplier: 1)
                 windowAnchor?.constant = -padding.bottom
                 windowAnchor?.priority = UILayoutPriority(rawValue: 750)
                 windowAnchor?.isActive = true

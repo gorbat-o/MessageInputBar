@@ -65,7 +65,7 @@ open class AutocompleteManager: NSObject, InputPlugin, UITextViewDelegate, UITab
     open var keepPrefixOnCompletion = true
     
     /// The default text attributes
-    open var defaultTextAttributes: [NSAttributedStringKey: Any] =
+    open var defaultTextAttributes: [NSAttributedString.Key: Any] =
         [.font: UIFont.preferredFont(forTextStyle: .body), .foregroundColor: UIColor.black]
     
     // MARK: - Properties [Private]
@@ -74,10 +74,10 @@ open class AutocompleteManager: NSObject, InputPlugin, UITextViewDelegate, UITab
     public private(set) var autocompletePrefixes = Set<String>()
     
     /// The text attributes applied to highlighted substrings for each prefix
-    public private(set) var autocompleteTextAttributes = [String: [NSAttributedStringKey: Any]]()
+    public private(set) var autocompleteTextAttributes = [String: [NSAttributedString.Key: Any]]()
     
     /// A key used for referencing which substrings were autocompletes
-    private let NSAttributedAutocompleteKey = NSAttributedStringKey.init("com.messagekit.MessageInputBar.autocompletekey")
+    private let NSAttributedAutocompleteKey = NSAttributedString.Key.init("com.messagekit.MessageInputBar.autocompletekey")
     
     /// The NSAttributedStringKey.paragraphStyle value applied to attributed strings
     private let paragraphStyle: NSMutableParagraphStyle = {
@@ -88,7 +88,7 @@ open class AutocompleteManager: NSObject, InputPlugin, UITextViewDelegate, UITab
     }()
     
     /// A reference to `defaultTextAttributes` that adds the NSAttributedAutocompleteKey
-    private var typingTextAttributes: [NSAttributedStringKey: Any] {
+    private var typingTextAttributes: [NSAttributedString.Key: Any] {
         var attributes = defaultTextAttributes
         attributes[NSAttributedAutocompleteKey] = false
         attributes[.paragraphStyle] = paragraphStyle
@@ -146,7 +146,7 @@ open class AutocompleteManager: NSObject, InputPlugin, UITextViewDelegate, UITab
     
     // MARK: - API [Public]
     
-    open func register(prefix: String, with attributedTextAttributes: [NSAttributedStringKey:Any]? = nil) {
+    open func register(prefix: String, with attributedTextAttributes: [NSAttributedString.Key:Any]? = nil) {
         autocompletePrefixes.insert(prefix)
         autocompleteTextAttributes[prefix] = attributedTextAttributes
         autocompleteTextAttributes[prefix]?[.paragraphStyle] = paragraphStyle
@@ -217,7 +217,7 @@ open class AutocompleteManager: NSObject, InputPlugin, UITextViewDelegate, UITab
         
         var typingAttributes = [String: Any]()
         typingTextAttributes.forEach { typingAttributes[$0.key.rawValue] = $0.value }
-        textView?.typingAttributes = typingAttributes
+        textView?.typingAttributes = convertToNSAttributedStringKeyDictionary(typingAttributes)
     }
     
     
@@ -349,4 +349,9 @@ open class AutocompleteManager: NSObject, InputPlugin, UITextViewDelegate, UITab
         autocomplete(with: session)
     }
     
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
 }
